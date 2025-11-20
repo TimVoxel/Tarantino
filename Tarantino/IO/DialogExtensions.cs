@@ -1,7 +1,7 @@
 ﻿using System.CodeDom.Compiler;
 using Tarantino.Model;
 
-namespace Tarantino.Extensions
+namespace Tarantino.IO
 {
     public static class DialogExtensions
     {
@@ -39,7 +39,7 @@ namespace Tarantino.Extensions
                 }
             }
 
-            WriteColouredIfConsole(ConsoleColor.Blue, $"Dialog");
+            WriteColouredIfConsole(ConsoleColor.Cyan, $"Dialog");
             WriteColouredIfConsoleLine(ConsoleColor.Gray, ": ");
             WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{dialog.Text}\"");
             writer.Indent++;
@@ -64,6 +64,13 @@ namespace Tarantino.Extensions
                         WriteColouredIfConsole(ConsoleColor.Green, $"Text Response");
                         WriteColouredIfConsole(ConsoleColor.Gray, ": ");
                         WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{textResponse.Text}\"");
+
+                        if (textResponse.Answer != null)
+                        {
+                            WriteColouredIfConsole(ConsoleColor.Green, "  Answer");
+                            WriteColouredIfConsole(ConsoleColor.Gray, ": ");
+                            WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{textResponse.Answer}\"");
+                        }
                         break;
 
                     case SubDialogResponse subResponse:
