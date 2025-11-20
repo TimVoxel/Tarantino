@@ -59,9 +59,9 @@ namespace Tarantino.IO
             {
                 switch (response)
                 {
-                    case TextDialogResponse textResponse:
+                    case AnswerDialogResponse textResponse:
                         WriteColouredIfConsole(ConsoleColor.Gray, "- ");
-                        WriteColouredIfConsole(ConsoleColor.Green, $"Text Response");
+                        WriteColouredIfConsole(ConsoleColor.Green, $"Answer Response");
                         WriteColouredIfConsole(ConsoleColor.Gray, ": ");
                         WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{textResponse.Text}\"");
 
@@ -76,7 +76,8 @@ namespace Tarantino.IO
                     case SubDialogResponse subResponse:
                         WriteColouredIfConsole(ConsoleColor.Gray, "- ");
                         WriteColouredIfConsole(ConsoleColor.Green, $"Sub dialog");
-                        WriteColouredIfConsoleLine(ConsoleColor.Gray, ": ");
+                        WriteColouredIfConsole(ConsoleColor.Gray, ": ");
+                        WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{subResponse.Text}\"");
                         writer.Indent++;
                         WriteDialog(subResponse.Dialog, writer);
                         writer.Indent--;

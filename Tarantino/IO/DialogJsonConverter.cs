@@ -27,21 +27,21 @@ namespace Tarantino.IO
 
         private static DialogResponse ReadResponse(JsonElement element, JsonSerializerOptions options)
         {
+            var text = element.GetProperty("text").GetString()!;
             var type = Enum.Parse<DialogResponseKind>(element.GetProperty("kind").GetString()!, ignoreCase: true);
 
             switch (type)
             {
-                case DialogResponseKind.Text:
-                    var text = element.GetProperty("text").GetString()!;
+                case DialogResponseKind.Answer:
                     var answer = element.TryGetProperty("answer", out var answerElement)
                         ? answerElement.GetString()
                         : null;
 
-                    return new TextDialogResponse(text, answer);
+                    return new AnswerDialogResponse(text, answer);
 
                 case DialogResponseKind.SubDialog:
                     var dialog = JsonSerializer.Deserialize<Dialog>(element.GetProperty("dialog"), options)!;
-                    return new SubDialogResponse(dialog);
+                    return new SubDialogResponse(text, dialog);
 
                 default:
                     throw new JsonException($"Unexpected response type: {type}");
@@ -68,12 +68,12 @@ namespace Tarantino.IO
         {
             writer.WriteStartObject();
             writer.WriteString("kind", response.Kind.ToString());
+            writer.WriteString("text", response.Text);
 
             switch (response)
             {
-                case TextDialogResponse textResponse:
-                    writer.WriteString("text", textResponse.Text);
-
+                case AnswerDialogResponse textResponse:
+                    
                     if (textResponse.Answer != null)
                     {
                         writer.WriteString("answer", textResponse.Answer);

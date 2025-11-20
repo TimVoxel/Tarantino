@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tarantino", "Tarantino\Tara
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tarantino-Playground", "Tarantino-Playground\Tarantino-Playground.csproj", "{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tarantino-REPL", "Tarantino-REPL\Tarantino-REPL.csproj", "{8D4881A6-57A0-4767-A1BF-95C5FFEA0842}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D4881A6-57A0-4767-A1BF-95C5FFEA0842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D4881A6-57A0-4767-A1BF-95C5FFEA0842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D4881A6-57A0-4767-A1BF-95C5FFEA0842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D4881A6-57A0-4767-A1BF-95C5FFEA0842}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

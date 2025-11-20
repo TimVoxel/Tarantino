@@ -1,6 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Tarantino.IO;
 
 namespace Tarantino.Model
@@ -28,25 +26,32 @@ namespace Tarantino.Model
 
     public abstract class DialogResponse
     {
+        public string Text { get; }
         public abstract DialogResponseKind Kind { get; }
 
-        public static TextDialogResponse Text(string text, string? answer = null)
-            => new TextDialogResponse(text, answer);
-
-        public static SubDialogResponse SubDialog(Dialog dialog)
-            => new SubDialogResponse(dialog);
-    }
-
-    public class TextDialogResponse : DialogResponse
-    {
-        public new string Text { get; }
-        public string? Answer { get; }
-
-        public override DialogResponseKind Kind => DialogResponseKind.Text;
-
-        public TextDialogResponse(string text, string? answer)
+        public DialogResponse(string text)
         {
             Text = text;
+        }
+
+        public static AnswerDialogResponse EndDialog(string text)
+            => new AnswerDialogResponse(text, null);
+
+        public static AnswerDialogResponse Answer(string text, string? answer = null)
+            => new AnswerDialogResponse(text, answer);
+
+        public static SubDialogResponse SubDialog(string text, Dialog dialog)
+            => new SubDialogResponse(text, dialog);
+    }
+
+    public class AnswerDialogResponse : DialogResponse
+    {
+        public new string? Answer { get; }
+
+        public override DialogResponseKind Kind => DialogResponseKind.Answer;
+
+        public AnswerDialogResponse(string text, string? answer) : base(text)
+        {
             Answer = answer;
         }        
     }
@@ -57,7 +62,7 @@ namespace Tarantino.Model
 
         public override DialogResponseKind Kind => DialogResponseKind.SubDialog;
 
-        public SubDialogResponse(Dialog dialog)
+        public SubDialogResponse(string text, Dialog dialog) : base(text)
         {
             Dialog = dialog;
         }
