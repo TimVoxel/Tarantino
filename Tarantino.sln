@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tarantino", "Tarantino\Tarantino.csproj", "{5EF86C42-CE45-4C3B-8907-CA2811266DCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tarantino-Playground", "Tarantino-Playground\Tarantino-Playground.csproj", "{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EF86C42-CE45-4C3B-8907-CA2811266DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EF86C42-CE45-4C3B-8907-CA2811266DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EF86C42-CE45-4C3B-8907-CA2811266DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EF86C42-CE45-4C3B-8907-CA2811266DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD7DD9C-9BEE-4F01-8DAB-291D481B359C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDBA1748-4C0D-47F0-BF41-25275735D0A9}
+	EndGlobalSection
+EndGlobal
