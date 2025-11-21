@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 using Tarantino.IO;
 using Tarantino.Model;
 
@@ -36,6 +38,7 @@ namespace Tarantino.REPL
         }
 
         private readonly List<MetaCommand> _metaCommands = new List<MetaCommand>();
+        private readonly Dictionary<string, DialogRegistry> _loadedRegistries = new Dictionary<string, DialogRegistry>();
         private string _contextDir = AppContext.BaseDirectory;
 
         public TarantinoREPL()
@@ -263,6 +266,56 @@ namespace Tarantino.REPL
             }
         }
 
+        [MetaCommand("registry-load", "loads the specified registry into the REPL and makes it accessible though a name")]
+        private void EvaluateRegistryLoad(string path, string name)
+        {
+            var fullPath = Path.Combine(_contextDir, path);
+
+            if (!Directory.Exists(fullPath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: Directory not found: {path}");
+                Console.ResetColor();
+                return;
+            }
+
+            var registry = DialogRegistry.CreateFromDirectory(fullPath);
+            _loadedRegistries.Add(name, registry);
+            Console.WriteLine($"Registry \"{name}\" loaded with {registry.Count} dialogs from: {path}");
+        }
+
+        [MetaCommand("registry-list", "lists all loaded registries")]
+        private void EvaluateRegistryList()
+        {
+            if (_loadedRegistries.Count == 0)
+            {
+                Console.WriteLine("No registries loaded.");
+                return;
+            }
+
+            Console.WriteLine("Loaded registries:");
+            foreach (var registry in _loadedRegistries)
+            {
+                Console.WriteLine($" - {registry.Key} ({registry.Value.Count})");
+            }
+        }
+
+        [MetaCommand("registry-dump", "pretty prints all of the dialogs in the specified registry")]
+        private void EvaluateRegistryDump(string name)
+        {
+            if (TryFindRegistry(name, out var registry))
+            {
+                foreach (var dialogEntry in registry)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"-- Dialog: {dialogEntry.Key} --");
+                    Console.ResetColor();
+                    dialogEntry.Value.WriteTo(Console.Out);
+                    Console.WriteLine();
+                }
+            }
+        }
+
         private Dialog? LoadDialog(string path)
         {
             var fullPath = Path.Combine(_contextDir, path);
@@ -270,7 +323,7 @@ namespace Tarantino.REPL
             if (!File.Exists(fullPath))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"error: File not found: {fullPath}");
+                Console.WriteLine($"error: File not found: {path}");
                 Console.ResetColor();
                 return null;
             }
@@ -288,6 +341,18 @@ namespace Tarantino.REPL
                 Console.ResetColor();
                 return null;
             }
+        }
+        private bool TryFindRegistry(string name, [MaybeNullWhen(false)] out DialogRegistry registry)
+        {
+            var found = _loadedRegistries.TryGetValue(name, out registry);
+
+            if (!found)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: Registry not found: {name}");
+                Console.ResetColor();
+            }
+            return found;
         }
     }
 }

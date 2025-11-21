@@ -1,0 +1,33 @@
+{
+  "text": "Welcome to Tarantino! This is a second test dialog!",
+  "responses": [
+    {
+      "kind": "Answer",
+      "text": "Nah I\u0027m good."
+    },
+    {
+      "kind": "SubDialog",
+      "text": "Tell me a joke",
+      "dialog": {
+        "text": "Sure! Why did the scarecrow win an award?",
+        "responses": [
+          {
+            "kind": "Answer",
+            "text": "I don\u0027t know, why?",
+            "answer": "Because he was outstanding in his field!"
+          },
+          {
+            "kind": "Answer",
+            "text": "Because he was outstanding in his field!",
+            "answer": "Hey, I was supposed to make the joke!"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Answer",
+      "text": "What\u0027s the weather like?",
+      "answer": "Idk bro I\u0027m a console app"
+    }
+  ]
+}
