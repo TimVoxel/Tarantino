@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"Model",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Model",
+  "parent":{
+    "name":"Tarantino",
+    "path":"folders/Tarantino.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
