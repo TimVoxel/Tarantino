@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
 using Tarantino.IO;
-using Tarantino.Model;
 
 namespace Tarantino.REPL
 {
@@ -249,7 +248,7 @@ namespace Tarantino.REPL
 
             switch (selected.Kind)
             {
-                case DialogResponseKind.Answer:
+                case DialogNodeKind.AnswerResponse:
                     var t = (AnswerDialogResponse)selected;
 
                     if (t.Answer is not null)
@@ -259,7 +258,7 @@ namespace Tarantino.REPL
                     }
                     break;
 
-                case DialogResponseKind.SubDialog:
+                case DialogNodeKind.SubDialogResponse:
                     var sub = ((SubDialogResponse)selected).Dialog;
                     Preview(sub);
                     break;

@@ -1,5 +1,4 @@
 ﻿using System.CodeDom.Compiler;
-using Tarantino.Model;
 
 namespace Tarantino.IO
 {

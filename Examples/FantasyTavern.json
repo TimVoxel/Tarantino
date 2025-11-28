@@ -1,0 +1,34 @@
+{
+  "text": "Welcome, traveler! What brings you to the Rusty Dragon Tavern?",
+  "responses": [
+    {
+      "kind": "AnswerResponse",
+      "text": "Just passing through.",
+      "answer": "Then may fortune guide your steps."
+    },
+    {
+      "kind": "SubDialogResponse",
+      "text": "Got any quests?",
+      "dialog": {
+        "text": "Indeed. Are you seeking danger or coin?",
+        "responses": [
+          {
+            "kind": "AnswerResponse",
+            "text": "Danger",
+            "answer": "The woods north of here hide a fearsome beast."
+          },
+          {
+            "kind": "AnswerResponse",
+            "text": "Coin",
+            "answer": "The merchant guild needs a caravan escort."
+          }
+        ]
+      }
+    },
+    {
+      "kind": "AnswerResponse",
+      "text": "Give me your strongest drink.",
+      "answer": "I hope your constitution is as strong as your request."
+    }
+  ]
+}

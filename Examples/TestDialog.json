@@ -2,22 +2,22 @@
   "text": "Welcome to Tarantino! How can I assist you today?",
   "responses": [
     {
-      "kind": "Answer",
+      "kind": "AnswerResponse",
       "text": "Nah I\u0027m good."
     },
     {
-      "kind": "SubDialog",
+      "kind": "SubDialogResponse",
       "text": "Tell me a joke",
       "dialog": {
         "text": "Sure! Why did the scarecrow win an award?",
         "responses": [
           {
-            "kind": "Answer",
+            "kind": "AnswerResponse",
             "text": "I don\u0027t know, why?",
             "answer": "Because he was outstanding in his field!"
           },
           {
-            "kind": "Answer",
+            "kind": "AnswerResponse",
             "text": "Because he was outstanding in his field!",
             "answer": "Hey, I was supposed to make the joke!"
           }
@@ -25,7 +25,7 @@
       }
     },
     {
-      "kind": "Answer",
+      "kind": "AnswerResponse",
       "text": "What\u0027s the weather like?",
       "answer": "Idk bro I\u0027m a console app"
     }

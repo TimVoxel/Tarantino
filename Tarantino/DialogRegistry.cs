@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using Tarantino;
 using Tarantino.IO;
-using Tarantino.Model;
 
 public class DialogRegistry : IEnumerable<KeyValuePair<string, Dialog>>
 {

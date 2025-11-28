@@ -1,0 +1,34 @@
+{
+  "text": "Hey! Ready to get started with your workout?",
+  "responses": [
+    {
+      "kind": "AnswerResponse",
+      "text": "Not today.",
+      "answer": "Rest is important too!"
+    },
+    {
+      "kind": "SubDialogResponse",
+      "text": "What workout do you recommend?",
+      "dialog": {
+        "text": "Depends! What’s your goal today?",
+        "responses": [
+          {
+            "kind": "AnswerResponse",
+            "text": "Build muscle",
+            "answer": "Try 3 sets of squats, deadlifts, and bench presses."
+          },
+          {
+            "kind": "AnswerResponse",
+            "text": "Lose weight",
+            "answer": "High-intensity interval training works great for that."
+          }
+        ]
+      }
+    },
+    {
+      "kind": "AnswerResponse",
+      "text": "Give me a random routine.",
+      "answer": "Sure! 20 pushups, 30 squats, and a 1-minute plank."
+    }
+  ]
+}

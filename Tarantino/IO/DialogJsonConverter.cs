@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Tarantino.Model;
 
 namespace Tarantino.IO
 {
@@ -28,18 +27,18 @@ namespace Tarantino.IO
         private static DialogResponse ReadResponse(JsonElement element, JsonSerializerOptions options)
         {
             var text = element.GetProperty("text").GetString()!;
-            var type = Enum.Parse<DialogResponseKind>(element.GetProperty("kind").GetString()!, ignoreCase: true);
+            var type = Enum.Parse<DialogNodeKind>(element.GetProperty("kind").GetString()!, ignoreCase: true);
 
             switch (type)
             {
-                case DialogResponseKind.Answer:
+                case DialogNodeKind.AnswerResponse:
                     var answer = element.TryGetProperty("answer", out var answerElement)
                         ? answerElement.GetString()
                         : null;
 
                     return new AnswerDialogResponse(text, answer);
 
-                case DialogResponseKind.SubDialog:
+                case DialogNodeKind.SubDialogResponse:
                     var dialog = JsonSerializer.Deserialize<Dialog>(element.GetProperty("dialog"), options)!;
                     return new SubDialogResponse(text, dialog);
 

@@ -1,0 +1,34 @@
+{
+  "text": "Welcome to Bean Bros Coffee! What can I get you?",
+  "responses": [
+    {
+      "kind": "AnswerResponse",
+      "text": "Just water, thanks.",
+      "answer": "Right away!"
+    },
+    {
+      "kind": "SubDialogResponse",
+      "text": "What flavors do you have?",
+      "dialog": {
+        "text": "We have quite a few! Which type are you asking about?",
+        "responses": [
+          {
+            "kind": "AnswerResponse",
+            "text": "Coffee syrups",
+            "answer": "Caramel, vanilla, hazelnut, and seasonal pumpkin spice!"
+          },
+          {
+            "kind": "AnswerResponse",
+            "text": "Milk options",
+            "answer": "Whole, skim, oat, almond, and coconut milk!"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "AnswerResponse",
+      "text": "Surprise me.",
+      "answer": "You got it. Hope you like experiments!"
+    }
+  ]
+}

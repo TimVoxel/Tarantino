@@ -1,0 +1,34 @@
+{
+  "text": "Tech Support here. What's the issue today?",
+  "responses": [
+    {
+      "kind": "AnswerResponse",
+      "text": "Nevermind, fixed it.",
+      "answer": "Awesome. Have a good one!"
+    },
+    {
+      "kind": "SubDialogResponse",
+      "text": "My computer won't start.",
+      "dialog": {
+        "text": "Got it. Does it make any sound when you press the power button?",
+        "responses": [
+          {
+            "kind": "AnswerResponse",
+            "text": "Yes",
+            "answer": "Then it's probably a display or cable issue."
+          },
+          {
+            "kind": "AnswerResponse",
+            "text": "No",
+            "answer": "Try checking power connections or using a different outlet."
+          }
+        ]
+      }
+    },
+    {
+      "kind": "AnswerResponse",
+      "text": "Can you remote in?",
+      "answer": "Not from here, sorry!"
+    }
+  ]
+}
