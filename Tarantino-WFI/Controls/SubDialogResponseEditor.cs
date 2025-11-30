@@ -42,8 +42,11 @@
         {
             if (_loadedBuilder != null)
             {
+                var startPos = _textTextBox.SelectionStart;
                 _loadedBuilder.Text = _textTextBox.Text;
                 ChangesMade?.Invoke(_loadedBuilder);
+
+                _textTextBox.SelectionStart = startPos;
             }
         }
 

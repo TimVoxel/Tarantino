@@ -29,12 +29,16 @@ namespace Tarantino.WFI
         public Dialog.DialogBuilder LoadDialog(Dialog dialog)
         {
             var builder = dialog.ToBuilder();
-            _loadedBuilder = builder;
+            LoadDialog(builder);
+            return builder;
+        }
+
+        public void LoadDialog(Dialog.DialogBuilder dialogBuilder)
+        {
+            _loadedBuilder = dialogBuilder;
             _handle.Nodes.Clear();
             _handle.Nodes.Add(BuildDialogNode(_loadedBuilder));
             _handle.ExpandAll();
-
-            return builder;
         }
 
         public void AddDialogResponse(DialogTreeNode node, DialogResponse.Builder builder)

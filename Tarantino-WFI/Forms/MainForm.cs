@@ -3,6 +3,7 @@ namespace Tarantino.WFI
     public partial class MainForm : Form
     {
         private IDialogNodeEditor[] _nodeEditors;
+        private string? _savePath;
 
         public MainForm()
         {
@@ -22,7 +23,7 @@ namespace Tarantino.WFI
             foreach (var editor in _nodeEditors)
             {
                 editor.Hide();
-            }       
+            }
         }
 
         private void OnImportDialogClicked(object sender, EventArgs e)
@@ -78,7 +79,7 @@ namespace Tarantino.WFI
                 HidePanels();
                 return;
             }
-         
+
             foreach (var editor in _nodeEditors)
             {
                 if (editor.TargetKind == builder?.Kind)
@@ -92,7 +93,7 @@ namespace Tarantino.WFI
                 }
             }
         }
-        
+
         private void HandleNodeChanges(DialogNode.Builder builder)
         {
             var selected = _dialogTreeView.SelectedNode;
@@ -106,10 +107,77 @@ namespace Tarantino.WFI
 
         private void AddDialogResponseNode(DialogNode.Builder builder)
             => _dialogTreeView.AddDialogResponse(_dialogTreeView.SelectedNode!, builder);
-        
+
         private void OnEditSubDialogRequested(Dialog.DialogBuilder builder)
         {
             _dialogTreeView.SelectedNode = (_dialogTreeView.SelectedNode!.Nodes[0] as DialogTreeNode) ?? throw new Exception("Edit dialog clicked while editing non-subdialog node");
+        }
+
+        private void OnNewDialogClicked(object sender, EventArgs e)
+        {
+            PromptSaveUnsavedWork();
+            var newBuilder = new Dialog.DialogBuilder("Empty dialog", new List<DialogNode.Builder>());
+            _dialogTreeView.LoadDialog(newBuilder);
+            StartEditing(_dialogTreeView.Root, newBuilder);
+        }
+
+        private void OnSaveClicked(object sender, EventArgs e)
+        {
+            if (!_dialogTreeView.HasLoadedDialog)
+            {
+                MessageBox.Show("No dialog loaded, nothing to save",
+                                "Save error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                return;
+            }
+
+            Save();
+        }
+
+        private void PromptSaveUnsavedWork()
+        {
+            if (_savePath != null || (_savePath == null && _dialogTreeView.HasLoadedDialog))
+            {
+                if (MessageBox.Show("Do you want to save the current dialog before creating a new one?",
+                                    "Save unsaved work",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    Save();
+                }
+            }
+        }
+
+        private void Save()
+        {
+            if (_savePath == null)
+            {
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "Tarantino Dialog File|*.json";
+                    saveFileDialog.Title = "Save Dialog File";
+
+                    if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                    {
+                        return;
+                    }
+
+                    _savePath = saveFileDialog.FileName;
+                }
+            }
+
+            var json = _dialogTreeView.BuildDialog().ToJson();
+            File.WriteAllText(_savePath, json);
+        }
+
+        private void OnKeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.S && e.Control)
+            {
+                Save();
+                e.Handled = true;
+            }
         }
     }
 }
