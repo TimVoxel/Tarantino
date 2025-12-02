@@ -3,7 +3,8 @@
   "responses": [
     {
       "kind": "AnswerResponse",
-      "text": "Nah I\u0027m good."
+      "text": "Nah I\u0027m good.",
+      "events": [ { "kind": "Tag", "tag": "test_response_event" } ]
     },
     {
       "kind": "SubDialogResponse",
@@ -29,5 +30,9 @@
       "text": "What\u0027s the weather like?",
       "answer": "Idk bro I\u0027m a console app"
     }
+  ],
+  "events": [
+     {  "kind": "Tag", "tag": "test_event" },
+     {  "kind": "ParameterChange", "parameter": "test_param", "value": "1" } 
   ]
 }

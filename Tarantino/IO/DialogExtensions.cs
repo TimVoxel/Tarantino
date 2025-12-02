@@ -1,4 +1,6 @@
-﻿using System.CodeDom.Compiler;
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Immutable;
 
 namespace Tarantino.IO
 {
@@ -18,40 +20,20 @@ namespace Tarantino.IO
         {
             var isConsole = IsConsole(writer);
 
-            void WriteColouredIfConsoleLine(ConsoleColor color, string message)
-            {
-                if (isConsole)
-                {
-                    Console.ForegroundColor = color;
-                    writer.WriteLine(message);
-                    Console.ResetColor();
-                }
-            }
-
-            void WriteColouredIfConsole(ConsoleColor color, string message)
-            {
-                if (isConsole)
-                {
-                    Console.ForegroundColor = color;
-                    writer.Write(message);
-                    Console.ResetColor();
-                }
-            }
-
-            WriteColouredIfConsole(ConsoleColor.Cyan, $"Dialog");
-            WriteColouredIfConsoleLine(ConsoleColor.Gray, ": ");
-            WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{dialog.Text}\"");
+            WriteColouredIfConsole(writer, ConsoleColor.Cyan, $"Dialog", isConsole);
+            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, ": ", isConsole);
+            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{dialog.Text}\"", isConsole);
             writer.Indent++;
 
             if (dialog.Responses.IsDefaultOrEmpty)
             {
-                WriteColouredIfConsoleLine(ConsoleColor.DarkGray, "(No responses)");
+                WriteColouredIfConsoleLine(writer, ConsoleColor.DarkGray, "(No responses)", isConsole);
                 writer.Indent--;
                 return;
             }
 
-            WriteColouredIfConsole(ConsoleColor.Green, $"Responses");
-            WriteColouredIfConsoleLine(ConsoleColor.Gray, ": ");
+            WriteColouredIfConsole(writer, ConsoleColor.Green, $"Responses", isConsole);
+            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, ": ", isConsole);
 
             writer.Indent++;
             foreach (var response in dialog.Responses)
@@ -59,24 +41,24 @@ namespace Tarantino.IO
                 switch (response)
                 {
                     case AnswerDialogResponse textResponse:
-                        WriteColouredIfConsole(ConsoleColor.Gray, "- ");
-                        WriteColouredIfConsole(ConsoleColor.Green, $"Answer Response");
-                        WriteColouredIfConsole(ConsoleColor.Gray, ": ");
-                        WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{textResponse.Text}\"");
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Green, $"Answer Response", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Text}\"", isConsole);
 
                         if (textResponse.Answer != null)
                         {
-                            WriteColouredIfConsole(ConsoleColor.Green, "  Answer");
-                            WriteColouredIfConsole(ConsoleColor.Gray, ": ");
-                            WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{textResponse.Answer}\"");
+                            WriteColouredIfConsole(writer, ConsoleColor.Green, "  Answer", isConsole);
+                            WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Answer}\"", isConsole);
                         }
                         break;
 
                     case SubDialogResponse subResponse:
-                        WriteColouredIfConsole(ConsoleColor.Gray, "- ");
-                        WriteColouredIfConsole(ConsoleColor.Green, $"Sub dialog");
-                        WriteColouredIfConsole(ConsoleColor.Gray, ": ");
-                        WriteColouredIfConsoleLine(ConsoleColor.Gray, $"\"{subResponse.Text}\"");
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
+                        WriteColouredIfConsole(writer,ConsoleColor.Green, $"Sub dialog", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{subResponse.Text}\"", isConsole);
                         writer.Indent++;
                         WriteDialog(subResponse.Dialog, writer);
                         writer.Indent--;
@@ -85,8 +67,74 @@ namespace Tarantino.IO
                     default:
                         throw new Exception($"Unknown response type {response.GetType()}");
                 }
+
+                WriteEvents(writer, response.Events, isConsole);
             }
+
+            WriteEvents(writer, dialog.Events, isConsole);
+
             writer.Indent--;
+
+        }
+
+        private static void WriteEvents(IndentedTextWriter writer, ImmutableArray<DialogEvent> events, bool isConsole)
+        {
+            if (!events.Any())
+            {
+                return;
+            }
+
+            WriteColouredIfConsole(writer, ConsoleColor.Green, $"  Events", isConsole);
+            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, ": ", isConsole);
+
+            writer.Indent++;
+
+            foreach (var e in events)
+            {
+                switch (e)
+                {
+                    case TagEvent tagEvent:
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "  - ", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Green, $"Tag Event", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{tagEvent.Tag}\"", isConsole);
+                        break;
+
+                    case ParameterChangeEvent paramChange:
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "  - ", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Green, $"Parameter Change", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, $"\"{paramChange.Parameter}\" = ", isConsole);
+                        WriteColouredIfConsoleLine(writer, ConsoleColor.Yellow, $"\"{paramChange.Value}\"", isConsole);
+                        break;
+
+                    default:
+                        throw new Exception($"Unknown event type {e.GetType()}");
+                }
+            }
+
+            writer.Indent--;
+
+        }
+
+        private static void WriteColouredIfConsoleLine(IndentedTextWriter writer, ConsoleColor color, string message, bool isConsole)
+        {
+            if (isConsole)
+            {
+                Console.ForegroundColor = color;
+                writer.WriteLine(message);
+                Console.ResetColor();
+            }
+        }
+
+        private static void WriteColouredIfConsole(IndentedTextWriter writer, ConsoleColor color, string message, bool isConsole)
+        {
+            if (isConsole)
+            {
+                Console.ForegroundColor = color;
+                writer.Write(message);
+                Console.ResetColor();
+            }
         }
 
         private static bool IsConsole(TextWriter writer)

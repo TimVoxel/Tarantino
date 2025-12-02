@@ -116,7 +116,7 @@ namespace Tarantino.WFI
         private void OnNewDialogClicked(object sender, EventArgs e)
         {
             PromptSaveUnsavedWork();
-            var newBuilder = new Dialog.DialogBuilder("Empty dialog", new List<DialogNode.Builder>());
+            var newBuilder = new Dialog.DialogBuilder("Sample text dialog");
             _dialogTreeView.LoadDialog(newBuilder);
             StartEditing(_dialogTreeView.Root, newBuilder);
         }

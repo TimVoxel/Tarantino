@@ -1,9 +1,110 @@
 ﻿using System.Collections.Immutable;
-using System.Security.Cryptography.X509Certificates;
 using Tarantino.IO;
 
 namespace Tarantino
 {
+    public enum DialogEventKind
+    {
+        ParameterChange,
+        Tag
+    }
+
+    public abstract class DialogEvent
+    {
+        public abstract DialogEventKind Kind { get; }
+
+        public abstract class Builder
+        {
+            public abstract DialogEventKind Kind { get; }
+            public abstract Builder ConvertToKind(DialogEventKind kind);
+            public abstract DialogEvent Build();
+        }
+
+        public abstract Builder ToBuilder();
+    }
+
+    public class TagEvent : DialogEvent
+    {
+        public override DialogEventKind Kind => DialogEventKind.Tag;
+        public string Tag { get; }
+
+        public TagEvent(string tag)
+        {
+            Tag = tag;
+        }
+
+        public class TagEventBuilder : Builder
+        {
+            public string Tag { get; set; }
+            public override DialogEventKind Kind => DialogEventKind.Tag;
+
+
+            public TagEventBuilder() : this(string.Empty) {}
+
+            public TagEventBuilder(string tag)
+            {
+                Tag = tag;
+            }
+
+            public override Builder ConvertToKind(DialogEventKind kind)
+            {
+                return kind switch
+                {
+                    DialogEventKind.Tag => this,
+                    DialogEventKind.ParameterChange => new ParameterChangeEvent.ParameterChangeEventBuilder(string.Empty, string.Empty),
+                    _ => throw new Exception($"Cannot convert event with kind {Kind} to {kind}")
+                };
+            }
+
+            public override DialogEvent Build()
+                => new TagEvent(Tag);
+        }
+
+        public override Builder ToBuilder()
+            => new TagEventBuilder(Tag);
+    }
+
+    public class ParameterChangeEvent : DialogEvent
+    {
+        public override DialogEventKind Kind => DialogEventKind.ParameterChange;
+        public string Parameter { get; }
+        public string Value { get; set; }
+
+        public ParameterChangeEvent(string parameter, string value)
+        {
+            Parameter = parameter;
+            Value = value;
+        }
+
+        public class ParameterChangeEventBuilder : Builder
+        {
+            public string Parameter { get; set; }
+            public string Value { get; set; }
+            public override DialogEventKind Kind => DialogEventKind.ParameterChange;
+
+            public ParameterChangeEventBuilder(string parameter, string value)
+            {
+                Parameter = parameter;
+                Value = value;
+            }
+            public override Builder ConvertToKind(DialogEventKind kind)
+            {
+                return kind switch
+                {
+                    DialogEventKind.ParameterChange => this,
+                    DialogEventKind.Tag => new TagEvent.TagEventBuilder(Parameter),
+                    _ => throw new Exception($"Cannot convert event with kind {Kind} to {kind}")
+                };
+            }
+
+            public override DialogEvent Build()
+                => new ParameterChangeEvent(Parameter, Value);
+        }
+
+        public override Builder ToBuilder()
+            => new ParameterChangeEventBuilder(Parameter, Value);
+    }
+
     public abstract class DialogNode
     {
         public abstract DialogNodeKind Kind { get; }
@@ -17,15 +118,22 @@ namespace Tarantino
         public abstract class Builder
         { 
             public string Text { get; set; }
+            public List<DialogEvent.Builder> Events { get; }
+
             public abstract DialogNodeKind Kind { get; }
             public abstract Builder ConvertToKind(DialogNodeKind kind);
 
-            public Builder(string text)
+            public Builder(string text, List<DialogEvent.Builder> events)
             {
                 Text = text;
+                Events = events;
             }
 
-            public Builder() : this(string.Empty)
+            public Builder(string text) : this(text, new List<DialogEvent.Builder>())
+            {
+            }
+
+            public Builder() : this(string.Empty, new List<DialogEvent.Builder>())
             {
             }
 
@@ -37,16 +145,16 @@ namespace Tarantino
     public class Dialog : DialogNode
     {
         public ImmutableArray<DialogResponse> Responses { get; }
-
+        public ImmutableArray<DialogEvent> Events { get; }
         public override DialogNodeKind Kind => DialogNodeKind.Dialog;
 
-        public Dialog(string text, ImmutableArray<DialogResponse> respones) : base(text)
+        public Dialog(string text, 
+                      ImmutableArray<DialogResponse> respones,
+                      ImmutableArray<DialogEvent> events) : base(text)
         {
             Responses = respones;
+            Events = events;
         }
-
-        public static Dialog Create(string text, params DialogResponse[] responses)
-            => new Dialog(text, responses.ToImmutableArray());
 
         public string ToJson()
             => DialogSerializer.Serialize(this);
@@ -55,23 +163,27 @@ namespace Tarantino
             => DialogSerializer.Deserialize(json);
 
         public DialogBuilder ToBuilder()
-            => new DialogBuilder(Text, Responses.Select(r => r.ToBuilder()).ToList());
+            => new DialogBuilder(Text, 
+                    Responses.Select(r => r.ToBuilder()).ToList(), 
+                    Events.Select(e => e.ToBuilder()).ToList());
 
         public class DialogBuilder : Builder
         {
             public List<Builder> Responses { get; }
+
             public override DialogNodeKind Kind => DialogNodeKind.Dialog;
 
-            public DialogBuilder(string text, List<Builder> responses)
+            public DialogBuilder(string text, List<Builder> responses, List<DialogEvent.Builder> events) : base(text, events)
             {
-                Text = text;
                 Responses = responses;
             }
 
-            public DialogBuilder()
+            public DialogBuilder(string text) : this(text, new List<Builder>(), new List<DialogEvent.Builder>())
             {
-                Text = string.Empty;
-                Responses = new List<Builder>();
+            }
+
+            public DialogBuilder() : this(string.Empty, new List<Builder>(), new List<DialogEvent.Builder>())
+            {
             }
 
             public DialogBuilder SetText(string text)
@@ -98,42 +210,42 @@ namespace Tarantino
             public override Dialog Build()
             {
                 var responsesBuilder = ImmutableArray.CreateBuilder<DialogResponse>(Responses.Count);
+                var eventsBuilder = ImmutableArray.CreateBuilder<DialogEvent>(Events.Count); 
 
                 foreach (var responseBuilder in Responses)
                 {
                     responsesBuilder.Add((DialogResponse) responseBuilder.Build());
                 }
 
-                return new Dialog(Text, responsesBuilder.ToImmutable());
+                foreach (var eventBuilder in Events)
+                {
+                    eventsBuilder.Add(eventBuilder.Build());
+                }
+
+                return new Dialog(Text, responsesBuilder.ToImmutable(), eventsBuilder.ToImmutable());
             }
         }
     }
 
     public abstract class DialogResponse : DialogNode
     {
-        public DialogResponse(string text) : base(text)
+        public ImmutableArray<DialogEvent> Events { get; }
+
+        public DialogResponse(string text, ImmutableArray<DialogEvent> events) : base(text)
         {
+            Events = events;
         }
-
-        public static AnswerDialogResponse EndDialog(string text)
-            => new AnswerDialogResponse(text, null);
-
-        public static AnswerDialogResponse Answer(string text, string? answer = null)
-            => new AnswerDialogResponse(text, answer);
-
-        public static SubDialogResponse SubDialog(string text, Dialog dialog)
-            => new SubDialogResponse(text, dialog);
 
         public abstract Builder ToBuilder();
     }
 
     public class AnswerDialogResponse : DialogResponse
     {
-        public new string? Answer { get; }
+        public string? Answer { get; }
 
         public override DialogNodeKind Kind => DialogNodeKind.AnswerResponse;
 
-        public AnswerDialogResponse(string text, string? answer) : base(text)
+        public AnswerDialogResponse(string text, ImmutableArray<DialogEvent> events, string? answer) : base(text, events)
         {
             Answer = answer;
         }
@@ -157,13 +269,22 @@ namespace Tarantino
                 return kind switch
                 {
                     DialogNodeKind.AnswerResponse => this,
-                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(Text, new Dialog.DialogBuilder("Sample dialog text", new List<Builder>())),
+                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(Text, new Dialog.DialogBuilder("Sample dialog text", new List<Builder>(), new List<DialogEvent.Builder>())),
                     _ => throw new Exception($"Cannot convert node with kind {Kind} to {kind}")
                 };
             }
 
             public override DialogResponse Build()
-                => new AnswerDialogResponse(Text, Answer);
+            {
+                var events = ImmutableArray.CreateBuilder<DialogEvent>();
+
+                foreach (var e in Events)
+                {
+                    events.Add(e.Build());
+                }
+
+                return new AnswerDialogResponse(Text, events.ToImmutable(), Answer);
+            }   
         }
     }
 
@@ -173,7 +294,7 @@ namespace Tarantino
 
         public override DialogNodeKind Kind => DialogNodeKind.SubDialogResponse;
 
-        public SubDialogResponse(string text, Dialog dialog) : base(text)
+        public SubDialogResponse(string text, ImmutableArray<DialogEvent> events, Dialog dialog) : base(text, events)
         {
             Dialog = dialog;
         }
@@ -203,7 +324,16 @@ namespace Tarantino
             }
 
             public override DialogResponse Build()
-                => new SubDialogResponse(Text, Dialog.Build());
+            {
+                var events = ImmutableArray.CreateBuilder<DialogEvent>();
+
+                foreach (var e in Events)
+                {
+                    events.Add(e.Build());
+                }
+
+                return new SubDialogResponse(Text, events.ToImmutable(), Dialog.Build());
+            }
         }
     }
 }
