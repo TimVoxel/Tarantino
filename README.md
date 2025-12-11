@@ -6,7 +6,7 @@ This repo contains both the model library and a REPL and WFI for managing the di
 ## The format
 Every tarantino dialog is a tree of dialog nodes. You always start with a dialog. 
 
-A dialog node has a text property and a list of responses. When the dialog is previewed, the text of the dialog node is shown to the player. They are presented with the array of responses and are free to choose which one they like. Each response also has a text field that is displayed to the player.<br>
+A dialog node has a text array and a list of responses. When the dialog is previewed, each text component is shown of the dialog node is shown to the player. Afterwards, the player is presented with the array of responses and are free to choose which one they like. Each response also has a text field that is displayed to the player.<br>
 
 There are 2 types of responses:<br>
   1. Answer responses. These are the simplest reponse you can have, containing only the text and an answer. If the player selects this option, the NPS will answer with the "Answer" property. If the answer property is not set, the dialog will end.<br>
