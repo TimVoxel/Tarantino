@@ -10,8 +10,31 @@ namespace Tarantino.IO
         {
             using var doc = JsonDocument.ParseValue(ref reader);
             var root = doc.RootElement;
-            var text = root.GetProperty("text").GetString()!;
 
+            var text = ImmutableArray.CreateBuilder<TextComponent>();
+            var textElement = root.GetProperty("text");
+
+            switch (textElement.ValueKind)
+            {
+                case JsonValueKind.String:
+                    text.Add(new TextComponent(textElement.GetString()!, TextComponentKind.PlainText));
+                    break;
+
+                case JsonValueKind.Object:
+                    text.Add(ReadTextComponent(textElement));
+                    break;
+
+                case JsonValueKind.Array:
+                    foreach (var element in textElement.EnumerateArray())
+                    {
+                        text.Add(ReadTextComponent(element));
+                    }
+                    break;
+
+                default: 
+                    throw new JsonException($"Unexpected kind: {textElement.ValueKind}");
+            }
+            
             var responses = ImmutableArray.CreateBuilder<DialogResponse>();
             
             if (root.TryGetProperty("responses", out var responseArray))
@@ -24,19 +47,35 @@ namespace Tarantino.IO
 
             
 
-            return new Dialog(text, responses.ToImmutable(), ReadEvents(root, options));
+            var events = ReadEvents(root, options);
+
+            return new Dialog(text.ToImmutable(), responses.ToImmutable(), events);
         }
 
-        public override void Write(Utf8JsonWriter writer, Dialog value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, Dialog dialog, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
 
-            writer.WriteString("text", value.Text);
-
+            if (dialog.Text.Length == 1)
+            {
+                WriteTextComponent(writer, dialog.Text.Single());
+            }
+            else
+            {
+                writer.WritePropertyName("text");
+                writer.WriteStartArray();
+               
+                foreach (var element in dialog.Text)
+                {
+                    WriteTextComponent(writer, element);
+                }
+                writer.WriteEndArray();
+            }
+               
             writer.WritePropertyName("responses");
             writer.WriteStartArray();
 
-            foreach (var response in value.Responses)
+            foreach (var response in dialog.Responses)
             {
                 WriteResponse(writer, response, options);
             }
@@ -46,7 +85,7 @@ namespace Tarantino.IO
             writer.WritePropertyName("events");
             writer.WriteStartArray();
 
-            foreach (var response in value.Responses)
+            foreach (var response in dialog.Responses)
             {
                 WriteResponse(writer, response, options);
             }
@@ -167,5 +206,43 @@ namespace Tarantino.IO
             writer.WriteEndObject();
         }
 
+        private static TextComponent ReadTextComponent(JsonElement element)
+        {
+            // String literal = plain text
+            if (element.ValueKind == JsonValueKind.String)
+            {
+                return new TextComponent(element.GetString()!, TextComponentKind.PlainText);
+            }
+
+            // Object form
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                var kind = TextComponentKind.PlainText;
+
+                if (element.TryGetProperty("kind", out var kindProp))
+                {
+                    kind = Enum.Parse<TextComponentKind>(kindProp.GetString()!, ignoreCase: true);
+                }
+
+                var text = element.GetProperty("text").GetString()!;
+                return new TextComponent(text, kind);
+            }
+
+            throw new JsonException("Invalid TextComponent JSON value.");
+        }
+
+        private static void WriteTextComponent(Utf8JsonWriter writer, TextComponent component)
+        {
+            if (component.Kind == TextComponentKind.PlainText)
+            {
+                writer.WriteStringValue(component.Text);
+                return;
+            }
+
+            writer.WriteStartObject();
+            writer.WriteString("kind", component.Kind.ToString());
+            writer.WriteString("text", component.Text);
+            writer.WriteEndObject();
+        }
     }
 }

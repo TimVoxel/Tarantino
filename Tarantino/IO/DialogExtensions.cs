@@ -1,5 +1,4 @@
-﻿using System;
-using System.CodeDom.Compiler;
+﻿using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 
 namespace Tarantino.IO
@@ -22,7 +21,8 @@ namespace Tarantino.IO
 
             WriteColouredIfConsole(writer, ConsoleColor.Cyan, $"Dialog", isConsole);
             WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, ": ", isConsole);
-            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{dialog.Text}\"", isConsole);
+            WriteTextComponents(writer, dialog.Text, isConsole);
+
             writer.Indent++;
 
             if (dialog.Responses.IsDefaultOrEmpty)
@@ -75,6 +75,26 @@ namespace Tarantino.IO
 
             writer.Indent--;
 
+        }
+
+        private static void WriteTextComponents(IndentedTextWriter writer, ImmutableArray<TextComponent> text, bool isConsole)
+        {
+            if (text.Length == 1)
+            {
+                var single = text.Single();
+                if (single.Kind == TextComponentKind.PlainText)
+                {
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, single.Text, isConsole);
+                }
+
+                return;
+            }
+
+            foreach (var component in text)
+            {
+                WriteColouredIfConsole(writer, ConsoleColor.Yellow, $"{component.Kind}", isConsole);
+                WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $" - {component.Text}", isConsole);
+            }
         }
 
         private static void WriteEvents(IndentedTextWriter writer, ImmutableArray<DialogEvent> events, bool isConsole)
