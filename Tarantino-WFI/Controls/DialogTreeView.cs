@@ -195,7 +195,9 @@ namespace Tarantino.WFI
         }
 
         private void OnNodeSelected(object sender, TreeViewEventArgs e)
-            => NodeSelected?.Invoke(e.Node as DialogTreeNode, e.Node?.Tag as DialogNode.Builder);
+        {
+            NodeSelected?.Invoke(e.Node as DialogTreeNode, e.Node?.Tag as DialogNode.Builder);
+        }
 
         internal Dialog BuildDialog()
             => _loadedBuilder?.Build() ?? throw new InvalidOperationException("No dialog loaded");

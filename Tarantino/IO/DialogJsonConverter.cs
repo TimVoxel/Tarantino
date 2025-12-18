@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Runtime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -59,6 +58,7 @@ namespace Tarantino.IO
 
             if (dialog.Text.Length == 1)
             {
+                writer.WritePropertyName("text");
                 WriteTextComponent(writer, dialog.Text.Single());
             }
             else
@@ -75,24 +75,14 @@ namespace Tarantino.IO
                
             writer.WritePropertyName("responses");
             writer.WriteStartArray();
-
             foreach (var response in dialog.Responses)
             {
                 WriteResponse(writer, response, options);
             }
+            writer.WriteEndArray();
+
+            WriteEvents(writer, dialog.Events, options);
             
-            writer.WriteEndArray();
-
-            writer.WritePropertyName("events");
-            writer.WriteStartArray();
-
-            foreach (var response in dialog.Responses)
-            {
-                WriteResponse(writer, response, options);
-            }
-
-            writer.WriteEndArray();
-
             writer.WriteEndObject();
         }
 
@@ -155,6 +145,7 @@ namespace Tarantino.IO
                     throw new JsonException($"Unknown DialogResponse type: {response.GetType()}");
             }
 
+            WriteEvents(writer, response.Events, options);
             writer.WriteEndObject();
         }
 
@@ -171,6 +162,19 @@ namespace Tarantino.IO
             }
 
             return events.ToImmutable();
+        }
+
+        private static void WriteEvents(Utf8JsonWriter writer, IEnumerable<DialogEvent> events, JsonSerializerOptions options)
+        {
+            writer.WritePropertyName("events");
+            writer.WriteStartArray();
+
+            foreach (var e in events)
+            {
+                WriteEvent(writer, e, options);
+            }
+
+            writer.WriteEndArray();
         }
 
         private static DialogEvent ReadEvent(JsonElement element, JsonSerializerOptions options)

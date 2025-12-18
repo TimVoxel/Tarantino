@@ -84,8 +84,14 @@ namespace Tarantino.WFI
             {
                 if (editor.TargetKind == builder?.Kind)
                 {
+                    if (editor.EditedBuilder == builder)
+                    {
+                        continue;
+                    }
+
                     editor.Show();
                     editor.LoadBuilder(builder);
+                    Console.WriteLine("Started editing " + builder + " in editor " + editor.TargetKind);
                 }
                 else
                 {
@@ -115,9 +121,27 @@ namespace Tarantino.WFI
 
         private void OnNewDialogClicked(object sender, EventArgs e)
         {
-            PromptSaveUnsavedWork();
+            if (_savePath != null || (_savePath == null && _dialogTreeView.HasLoadedDialog))
+            {
+                var result = MessageBox.Show("Do you want to save the current dialog before creating a new one?",
+                                    "Save unsaved work",
+                                    MessageBoxButtons.YesNoCancel,
+                                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                if (result == DialogResult.Yes)
+                {
+                    Save();
+                }
+            }
+            
             var newBuilder = new Dialog.DialogBuilder("Sample text dialog");
             _dialogTreeView.LoadDialog(newBuilder);
+            _savePath = null;
             StartEditing(_dialogTreeView.Root, newBuilder);
         }
 
@@ -137,16 +161,7 @@ namespace Tarantino.WFI
 
         private void PromptSaveUnsavedWork()
         {
-            if (_savePath != null || (_savePath == null && _dialogTreeView.HasLoadedDialog))
-            {
-                if (MessageBox.Show("Do you want to save the current dialog before creating a new one?",
-                                    "Save unsaved work",
-                                    MessageBoxButtons.YesNo,
-                                    MessageBoxIcon.Warning) == DialogResult.Yes)
-                {
-                    Save();
-                }
-            }
+           
         }
 
         private void Save()

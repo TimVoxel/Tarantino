@@ -1,4 +1,5 @@
-﻿using Tarantino.WFI.Forms;
+﻿using System.ComponentModel;
+using Tarantino.WFI.Forms;
 
 namespace Tarantino.WFI
 {
@@ -10,9 +11,54 @@ namespace Tarantino.WFI
         public event Action<DialogNode.Builder>? ChangesMade;
         public event Action<DialogNode.Builder>? ResponseAdded;
 
+        public DialogNode.Builder? EditedBuilder => _loadedBuilder;
+
         public DialogEditor()
         {
             InitializeComponent();
+
+            var source = new List<TextComponent.Builder>()
+            {
+                new TextComponent.Builder("Sample text", TextComponentKind.PlainText)
+            };
+
+            _textView.CurrentCellDirtyStateChanged += (s, e) =>
+            {
+                if (_textView.IsCurrentCellDirty)
+                {
+                    _textView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                }
+            };
+
+            _textView.DataSource = source;
+
+            var comboColumn = new DataGridViewComboBoxColumn
+            {
+                Name = "Kind",
+                HeaderText = "Kind",
+                DataPropertyName = "Kind",
+                DataSource = Enum.GetValues(typeof(TextComponentKind))
+            };
+
+            var index = _textView.Columns["Kind"].Index;
+            _textView.Columns.RemoveAt(index);
+            _textView.Columns.Insert(index, comboColumn);
+        }
+
+        private void OnTextComponentCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || _loadedBuilder == null)
+            {
+                return;
+            }
+
+            var cell = _textView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            var value = cell.Value;
+
+            if (e.ColumnIndex == 1)
+            {
+                ChangesMade?.Invoke(_loadedBuilder);
+            }
         }
 
         public void LoadBuilder(DialogNode.Builder builder)
@@ -23,19 +69,11 @@ namespace Tarantino.WFI
             }
 
             _loadedBuilder = dialogBuilder;
-            _textTextBox.Text = dialogBuilder.Text.First().Text; //TODO: Change for component support
-        }
-
-        private void OnTextChanged(object sender, EventArgs e)
-        {
-            if (_loadedBuilder != null)
-            {
-                var startPos = _textTextBox.SelectionStart;
-                _loadedBuilder.Text[0] = new TextComponent.Builder(_textTextBox.Text, TextComponentKind.PlainText);
-                ChangesMade?.Invoke(_loadedBuilder);
-
-                _textTextBox.SelectionStart = startPos;
-            }
+            var dataSource = new BindingList<TextComponent.Builder>(_loadedBuilder.Text);
+            dataSource.AllowNew = true;
+            _textView.AllowUserToAddRows = true;
+            _textView.AutoGenerateColumns = true;
+            _textView.DataSource = dataSource;
         }
 
         private void OnAddResponseClicked(object sender, EventArgs e)

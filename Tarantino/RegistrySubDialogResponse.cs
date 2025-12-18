@@ -35,10 +35,7 @@ namespace Tarantino
             {
                 return kind switch
                 {
-                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(
-                        Text,
-                        Events,
-                        new Dialog.DialogBuilder()),
+                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(Text, Events, new Dialog.DialogBuilder()),
                     DialogNodeKind.AnswerResponse => new AnswerDialogResponse.AnswerBuilder(Text, Events, null),
                     DialogNodeKind.RegistrySubDialogResponse => this,
                     _ => throw new Exception($"Cannot convert node with kind {Kind} to {kind}")

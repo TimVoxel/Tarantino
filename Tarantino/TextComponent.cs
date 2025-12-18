@@ -22,6 +22,8 @@
                 Text = text;
             }
 
+            public Builder() : this("Sample text", TextComponentKind.PlainText) {}
+
             public TextComponent Build()
                 => new TextComponent(Text, Kind);
         }

@@ -5,6 +5,8 @@
         private AnswerDialogResponse.AnswerBuilder? _loadedBuilder;
         public DialogNodeKind TargetKind => DialogNodeKind.AnswerResponse;
 
+        public DialogNode.Builder? EditedBuilder => throw new NotImplementedException();
+
         public event Action<DialogNode.Builder>? ChangesMade;
 
         public EventEditor()

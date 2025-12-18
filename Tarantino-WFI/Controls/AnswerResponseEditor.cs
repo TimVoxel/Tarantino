@@ -7,6 +7,9 @@
 
         public event Action<DialogNode.Builder>? ChangesMade;
 
+        public DialogNode.Builder EditedBuilder
+            => _loadedBuilder!;
+
         public AnswerResponseEditor()
         {
             InitializeComponent();

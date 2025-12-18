@@ -80,6 +80,11 @@ namespace Tarantino
                 var responsesBuilder = ImmutableArray.CreateBuilder<DialogResponse>(Responses.Count);
                 var eventsBuilder = ImmutableArray.CreateBuilder<DialogEvent>(Events.Count); 
 
+                foreach (var textComponentBuilder in Text)
+                {
+                    textBuilder.Add(textComponentBuilder.Build());
+                }
+
                 foreach (var responseBuilder in Responses)
                 {
                     responsesBuilder.Add((DialogResponse) responseBuilder.Build());
