@@ -18,7 +18,7 @@
             DialogResult = DialogResult.OK;
         }
 
-        public DialogNode.Builder Response
+        public DialogResponse.ResponseBuilder Response
         {
             get
             {
@@ -27,8 +27,8 @@
 
                 return kind switch
                 {
-                    DialogNodeKind.AnswerResponse => new AnswerDialogResponse.AnswerBuilder(text, null),
-                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(text, new Dialog.DialogBuilder("Sample dialog text", new List<DialogNode.Builder>())),
+                    DialogNodeKind.AnswerResponse => new AnswerDialogResponse.AnswerBuilder(text, new List<DialogEvent.Builder>(), null),
+                    DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(text, new List<DialogEvent.Builder>(), new Dialog.DialogBuilder("Sample text dialog")),
                     _ => throw new Exception($"Unexpected DialogNodeKind {kind}")
                 };
             }

@@ -111,19 +111,18 @@ namespace Tarantino.WFI
             _dragged.Remove();
             target.Parent.Nodes.Insert(target.Index + 1, _dragged);
 
-            var draggedBuilder = (DialogNode.Builder) _dragged.Tag!;
+            var draggedBuilder = (DialogResponse.ResponseBuilder) _dragged.Tag!;
 
             var draggedList = GetBuilderListForParent(draggedParent);
             var targetList = GetBuilderListForParent(target.Parent);
 
-            var targetBuilder = (DialogNode.Builder)target.Tag!;
+            var targetBuilder = (DialogResponse.ResponseBuilder) target.Tag!;
 
             if (draggedList != targetList)
             {
                 return;
             }
 
-            // Remove and reinsert in same builder list
             draggedList.Remove(draggedBuilder);
             var insertIndex = targetList.IndexOf(targetBuilder) + 1;
             draggedList.Insert(insertIndex, draggedBuilder);
@@ -180,16 +179,17 @@ namespace Tarantino.WFI
 
                 return builder switch
                 {
-                    Dialog.DialogBuilder dialog => dialog.Responses,
-                    SubDialogResponse.SubDialogBuilder sub => sub.Dialog.Responses,
+                    Dialog.DialogBuilder dialog => dialog.Responses.Cast<DialogNode.Builder>().ToList(),
+                    SubDialogResponse.SubDialogBuilder sub => sub.Dialog.Responses.Cast<DialogNode.Builder>().ToList(),
                     _ => throw new InvalidOperationException("Unsupported builder parent.")
                 };
             }
             else
             {
                 if (_loadedBuilder != null)
-                    return _loadedBuilder.Responses;
-
+                {
+                    return _loadedBuilder.Responses.Cast<DialogNode.Builder>().ToList();
+                }
                 throw new InvalidOperationException("No dialog loaded.");
             }
         }

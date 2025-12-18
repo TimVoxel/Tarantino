@@ -17,7 +17,7 @@
 
             Text = builder switch
             {
-                Dialog.DialogBuilder dialogBuilder => dialogBuilder.Text,
+                Dialog.DialogBuilder dialogBuilder => dialogBuilder.Text.First().Text, // TODO: replace with component support
                 SubDialogResponse.SubDialogBuilder subDialogBuilder => $"{subDialogBuilder.Kind}: {subDialogBuilder.Text}",
                 AnswerDialogResponse.AnswerBuilder answerBuilder => $"{answerBuilder.Kind}: {answerBuilder.Text}",
                 _ => Text

@@ -210,7 +210,36 @@ namespace Tarantino.REPL
 
         private void Preview(Dialog dialog)
         {
-            Console.WriteLine(dialog.Text);
+            void AnnounceEvents(DialogNode node)
+            {
+                foreach (var e in node.Events)
+                {
+                    switch (e)
+                    {
+                        case TagEvent tagEvent:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"Event dispatched: {tagEvent.Tag}");
+                            Console.ResetColor();
+                            break;
+
+                        case ParameterChangeEvent parameterChangeEvent:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"Event dispatched: {parameterChangeEvent.Parameter} = {parameterChangeEvent.Value}");
+                            Console.ResetColor();
+                            break;
+
+                        default:
+                            throw new Exception($"Unexpected event kind {e.Kind}");
+                    }
+                }
+            }
+
+            AnnounceEvents(dialog);
+
+            foreach (var component in dialog.Text)
+            {
+                Console.WriteLine(component.Text);
+            }
             Console.WriteLine();
 
             if (dialog.Responses.Length == 0)
@@ -262,6 +291,27 @@ namespace Tarantino.REPL
                     var sub = ((SubDialogResponse)selected).Dialog;
                     Preview(sub);
                     break;
+
+                case DialogNodeKind.RegistrySubDialogResponse:
+                    var registryResponse = (RegistrySubDialogResponse)selected;
+
+                    if (TryFindRegistry(registryResponse.Registry, out var registry))
+                    {
+                        if (registry.TryGetDialog(registryResponse.DialogName, out var subDialog))
+                        {
+                            Preview(subDialog);
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"error: Dialog \"{registryResponse.DialogName}\" not found in registry \"{registryResponse.Registry}\"");
+                            Console.ResetColor();
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new Exception("Unexpected response kind " + selected.Kind);
             }
         }
 

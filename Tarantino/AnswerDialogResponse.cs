@@ -32,9 +32,15 @@ namespace Tarantino
                 return kind switch
                 {
                     DialogNodeKind.AnswerResponse => this,
+                    DialogNodeKind.RegistrySubDialogResponse => new RegistrySubDialogResponse.RegistrySubDialogBuilder(
+                        Text,
+                        Events,
+                        string.Empty,
+                        string.Empty),
+
                     DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(
                         Text,
-                        new List<DialogEvent.Builder>(),
+                        Events,
                         new Dialog.DialogBuilder()),
                     _ => throw new Exception($"Cannot convert node with kind {Kind} to {kind}")
                 };

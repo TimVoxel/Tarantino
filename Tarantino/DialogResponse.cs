@@ -5,12 +5,10 @@ namespace Tarantino
     public abstract class DialogResponse : DialogNode
     {
         public string Text { get; }
-        public ImmutableArray<DialogEvent> Events { get; }
-
-        public DialogResponse(string text, ImmutableArray<DialogEvent> events) : base()
+       
+        public DialogResponse(string text, ImmutableArray<DialogEvent> events) : base(events)
         {
             Text = text;
-            Events = events;
         }
 
         public abstract class ResponseBuilder : Builder

@@ -7,16 +7,14 @@ namespace Tarantino
     {
         public ImmutableArray<TextComponent> Text { get; }
         public ImmutableArray<DialogResponse> Responses { get; }
-        public ImmutableArray<DialogEvent> Events { get; }
         public override DialogNodeKind Kind => DialogNodeKind.Dialog;
 
         public Dialog(ImmutableArray<TextComponent> text, 
                       ImmutableArray<DialogResponse> respones,
-                      ImmutableArray<DialogEvent> events) : base()
+                      ImmutableArray<DialogEvent> events) : base(events)
         {
             Text = text;
             Responses = respones;
-            Events = events;
         }
 
         public string ToJson()
@@ -49,6 +47,11 @@ namespace Tarantino
             public DialogBuilder(List<TextComponent.Builder> text) : this(text, new List<DialogResponse.ResponseBuilder>(), new List<DialogEvent.Builder>())
             {
             }
+
+            public DialogBuilder(string text) : this(new List<TextComponent.Builder>()
+            {
+                new TextComponent.Builder(text, TextComponentKind.PlainText)
+            }) { }
 
             public DialogBuilder() : this(
                 new List<TextComponent.Builder>(),

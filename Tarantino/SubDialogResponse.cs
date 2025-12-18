@@ -33,6 +33,11 @@ namespace Tarantino
                 {
                     DialogNodeKind.SubDialogResponse => this,
                     DialogNodeKind.AnswerResponse => new AnswerDialogResponse.AnswerBuilder(Text, Events, null),
+                    DialogNodeKind.RegistrySubDialogResponse => new RegistrySubDialogResponse.RegistrySubDialogBuilder(
+                        Text,
+                        Events,
+                        string.Empty,
+                        string.Empty),
                     _ => throw new Exception($"Cannot convert node with kind {Kind} to {kind}")
                 };
             }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Runtime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -114,6 +115,11 @@ namespace Tarantino.IO
                     var dialog = JsonSerializer.Deserialize<Dialog>(element.GetProperty("dialog"), options)!;
                     return new SubDialogResponse(text, events, dialog);
 
+                case DialogNodeKind.RegistrySubDialogResponse:
+                    var registry = element.GetProperty("registry").GetString()!;
+                    var dialogName = element.GetProperty("dialogName").GetString()!;
+                    return new RegistrySubDialogResponse(text, events, registry, dialogName);
+
                 default:
                     throw new JsonException($"Unexpected response type: {type}");
             }
@@ -138,6 +144,11 @@ namespace Tarantino.IO
                 case SubDialogResponse subResponse:
                     writer.WritePropertyName("dialog");
                     JsonSerializer.Serialize(writer, subResponse.Dialog, options);
+                    break;
+
+                case RegistrySubDialogResponse registrySubDialogResponse:
+                    writer.WriteString("registry", registrySubDialogResponse.Registry);
+                    writer.WriteString("dialogName", registrySubDialogResponse.DialogName);
                     break;
 
                 default:
@@ -208,13 +219,11 @@ namespace Tarantino.IO
 
         private static TextComponent ReadTextComponent(JsonElement element)
         {
-            // String literal = plain text
             if (element.ValueKind == JsonValueKind.String)
             {
                 return new TextComponent(element.GetString()!, TextComponentKind.PlainText);
             }
 
-            // Object form
             if (element.ValueKind == JsonValueKind.Object)
             {
                 var kind = TextComponentKind.PlainText;

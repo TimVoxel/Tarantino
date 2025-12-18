@@ -23,7 +23,7 @@ namespace Tarantino.WFI
             }
 
             _loadedBuilder = dialogBuilder;
-            _textTextBox.Text = dialogBuilder.Text;
+            _textTextBox.Text = dialogBuilder.Text.First().Text; //TODO: Change for component support
         }
 
         private void OnTextChanged(object sender, EventArgs e)
@@ -31,7 +31,7 @@ namespace Tarantino.WFI
             if (_loadedBuilder != null)
             {
                 var startPos = _textTextBox.SelectionStart;
-                _loadedBuilder.Text = _textTextBox.Text;
+                _loadedBuilder.Text[0] = new TextComponent.Builder(_textTextBox.Text, TextComponentKind.PlainText);
                 ChangesMade?.Invoke(_loadedBuilder);
 
                 _textTextBox.SelectionStart = startPos;

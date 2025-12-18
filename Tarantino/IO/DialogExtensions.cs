@@ -38,43 +38,63 @@ namespace Tarantino.IO
             writer.Indent++;
             foreach (var response in dialog.Responses)
             {
-                switch (response)
-                {
-                    case AnswerDialogResponse textResponse:
-                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
-                        WriteColouredIfConsole(writer, ConsoleColor.Green, $"Answer Response", isConsole);
-                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
-                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Text}\"", isConsole);
-
-                        if (textResponse.Answer != null)
-                        {
-                            WriteColouredIfConsole(writer, ConsoleColor.Green, "  Answer", isConsole);
-                            WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
-                            WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Answer}\"", isConsole);
-                        }
-                        break;
-
-                    case SubDialogResponse subResponse:
-                        WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
-                        WriteColouredIfConsole(writer,ConsoleColor.Green, $"Sub dialog", isConsole);
-                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
-                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{subResponse.Text}\"", isConsole);
-                        writer.Indent++;
-                        WriteDialog(subResponse.Dialog, writer);
-                        writer.Indent--;
-                        break;
-
-                    default:
-                        throw new Exception($"Unknown response type {response.GetType()}");
-                }
-
-                WriteEvents(writer, response.Events, isConsole);
+                WriteResponse(writer, isConsole, response);
             }
 
             WriteEvents(writer, dialog.Events, isConsole);
 
             writer.Indent--;
 
+        }
+
+        private static void WriteResponse(IndentedTextWriter writer, bool isConsole, DialogResponse response)
+        {
+            switch (response)
+            {
+                case AnswerDialogResponse textResponse:
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Green, $"Answer Response", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Text}\"", isConsole);
+
+                    if (textResponse.Answer != null)
+                    {
+                        WriteColouredIfConsole(writer, ConsoleColor.Green, "  Answer", isConsole);
+                        WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                        WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{textResponse.Answer}\"", isConsole);
+                    }
+                    break;
+
+                case SubDialogResponse subResponse:
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Green, $"Sub dialog", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{subResponse.Text}\"", isConsole);
+                    writer.Indent++;
+                    WriteDialog(subResponse.Dialog, writer);
+                    writer.Indent--;
+                    break;
+
+                case RegistrySubDialogResponse registrySubResponse:
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, "- ", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Green, $"Registry Sub dialog", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{registrySubResponse.Text}\"", isConsole);
+                    writer.Indent++;
+                    WriteColouredIfConsole(writer, ConsoleColor.Green, "  Registry Key", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{registrySubResponse.Registry}\"", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Green, "  Dialog Name", isConsole);
+                    WriteColouredIfConsole(writer, ConsoleColor.Gray, ": ", isConsole);
+                    WriteColouredIfConsoleLine(writer, ConsoleColor.Gray, $"\"{registrySubResponse.DialogName}\"", isConsole);
+                    writer.Indent--;
+                    break;
+
+                default:
+                    throw new Exception($"Unknown response type {response.GetType()}");
+            }
+
+            WriteEvents(writer, response.Events, isConsole);
         }
 
         private static void WriteTextComponents(IndentedTextWriter writer, ImmutableArray<TextComponent> text, bool isConsole)

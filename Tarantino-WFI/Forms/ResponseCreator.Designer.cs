@@ -50,42 +50,47 @@
             _layoutPanel.Dock = DockStyle.Fill;
             _layoutPanel.FlowDirection = FlowDirection.TopDown;
             _layoutPanel.Location = new Point(0, 0);
+            _layoutPanel.Margin = new Padding(6, 7, 6, 7);
             _layoutPanel.Name = "_layoutPanel";
-            _layoutPanel.Size = new Size(463, 213);
+            _layoutPanel.Size = new Size(992, 525);
             _layoutPanel.TabIndex = 2;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(3, 0);
+            label1.Location = new Point(6, 0);
+            label1.Margin = new Padding(6, 0, 6, 0);
             label1.Name = "label1";
-            label1.Size = new Size(32, 15);
+            label1.Size = new Size(73, 37);
             label1.TabIndex = 1;
             label1.Text = "Type";
             // 
             // _typeComboBox
             // 
             _typeComboBox.FormattingEnabled = true;
-            _typeComboBox.Location = new Point(3, 18);
+            _typeComboBox.Location = new Point(6, 44);
+            _typeComboBox.Margin = new Padding(6, 7, 6, 7);
             _typeComboBox.Name = "_typeComboBox";
-            _typeComboBox.Size = new Size(121, 23);
+            _typeComboBox.Size = new Size(255, 45);
             _typeComboBox.TabIndex = 0;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(3, 44);
+            label2.Location = new Point(6, 96);
+            label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
-            label2.Size = new Size(28, 15);
+            label2.Size = new Size(63, 37);
             label2.TabIndex = 2;
             label2.Text = "Text";
             // 
             // _textTextBox
             // 
             _textTextBox.Dock = DockStyle.Left;
-            _textTextBox.Location = new Point(3, 62);
+            _textTextBox.Location = new Point(6, 140);
+            _textTextBox.Margin = new Padding(6, 7, 6, 7);
             _textTextBox.Name = "_textTextBox";
-            _textTextBox.Size = new Size(453, 96);
+            _textTextBox.Size = new Size(966, 231);
             _textTextBox.TabIndex = 3;
             _textTextBox.Text = "";
             // 
@@ -94,16 +99,18 @@
             flowLayoutPanel1.Controls.Add(_cancelButton);
             flowLayoutPanel1.Controls.Add(_doneButton);
             flowLayoutPanel1.Dock = DockStyle.Top;
-            flowLayoutPanel1.Location = new Point(3, 164);
+            flowLayoutPanel1.Location = new Point(6, 385);
+            flowLayoutPanel1.Margin = new Padding(6, 7, 6, 7);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(453, 38);
+            flowLayoutPanel1.Size = new Size(966, 113);
             flowLayoutPanel1.TabIndex = 4;
             // 
             // _cancelButton
             // 
-            _cancelButton.Location = new Point(3, 3);
+            _cancelButton.Location = new Point(6, 7);
+            _cancelButton.Margin = new Padding(6, 7, 6, 7);
             _cancelButton.Name = "_cancelButton";
-            _cancelButton.Size = new Size(215, 35);
+            _cancelButton.Size = new Size(453, 86);
             _cancelButton.TabIndex = 0;
             _cancelButton.Text = "Cancel";
             _cancelButton.UseVisualStyleBackColor = true;
@@ -111,9 +118,10 @@
             // 
             // _doneButton
             // 
-            _doneButton.Location = new Point(224, 3);
+            _doneButton.Location = new Point(471, 7);
+            _doneButton.Margin = new Padding(6, 7, 6, 7);
             _doneButton.Name = "_doneButton";
-            _doneButton.Size = new Size(225, 35);
+            _doneButton.Size = new Size(482, 86);
             _doneButton.TabIndex = 1;
             _doneButton.Text = "Done";
             _doneButton.UseVisualStyleBackColor = true;
@@ -121,10 +129,11 @@
             // 
             // ResponseCreator
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(15F, 37F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(463, 213);
+            ClientSize = new Size(992, 525);
             Controls.Add(_layoutPanel);
+            Margin = new Padding(6, 7, 6, 7);
             Name = "ResponseCreator";
             Text = "Add response";
             _layoutPanel.ResumeLayout(false);

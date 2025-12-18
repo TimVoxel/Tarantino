@@ -4,6 +4,7 @@
     {
         Dialog,
         AnswerResponse,
-        SubDialogResponse
+        SubDialogResponse,
+        RegistrySubDialogResponse,
     }
 }

@@ -1,11 +1,15 @@
-﻿namespace Tarantino
+﻿using System.Collections.Immutable;
+
+namespace Tarantino
 {
     public abstract class DialogNode
     {
         public abstract DialogNodeKind Kind { get; }
+        public ImmutableArray<DialogEvent> Events { get; }
 
-        public DialogNode()
+        public DialogNode(ImmutableArray<DialogEvent> events)
         {
+            Events = events;
         }
 
         public abstract class Builder
@@ -24,6 +28,5 @@
 
             public abstract DialogNode Build();
         }
-
     }
 }
