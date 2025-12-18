@@ -10,7 +10,8 @@ A dialog node has a text array and a list of responses. When the dialog is previ
 
 There are 2 types of responses:<br>
   1. Answer responses. These are the simplest reponse you can have, containing only the text and an answer. If the player selects this option, the NPS will answer with the "Answer" property. If the answer property is not set, the dialog will end.<br>
-  2. Sub dialog. These contain a sub dialog node in them. When a sub dialog option is selected, it's sub dialog is shown to the player. This continues until the player selects an answer response (or if the sub dialog has no responses, which is undesirable).
+  2. Sub dialog. These contain a sub dialog node in them. When a sub dialog option is selected, it's sub dialog is shown to the player. This continues until the player selects an answer response (or if the sub dialog has no responses, which is undesirable).<br>
+  3. Registry Sub dialog. These will query the specified registry and display the specified dialog. Only works in case both the registry and the dialog exist.
 
 ## Events
 Every dialog node can have an optional list of events. Events allow you to add additional behaviour to the dialog. For instance, by adding an event to a response, you can handle the event to, for instance, change the background.<br>
