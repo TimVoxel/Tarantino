@@ -29,6 +29,7 @@
                 {
                     DialogNodeKind.AnswerResponse => new AnswerDialogResponse.AnswerBuilder(text, new List<DialogEvent.Builder>(), null),
                     DialogNodeKind.SubDialogResponse => new SubDialogResponse.SubDialogBuilder(text, new List<DialogEvent.Builder>(), new Dialog.DialogBuilder("Sample text dialog")),
+                    DialogNodeKind.RegistrySubDialogResponse => new RegistrySubDialogResponse.RegistrySubDialogBuilder(text, new List<DialogEvent.Builder>(), string.Empty, string.Empty),
                     _ => throw new Exception($"Unexpected DialogNodeKind {kind}")
                 };
             }

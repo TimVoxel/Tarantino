@@ -32,15 +32,18 @@ namespace Tarantino.WFI
         {
             label2 = new Label();
             _answerResponseEditPanel = new Panel();
-            _addResponseButton = new Button();
+            _eventEditor = new EventEditor();
             _textView = new DataGridView();
+            _addResponseButton = new Button();
             _answerResponseEditPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)_textView).BeginInit();
             SuspendLayout();
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(6, 0);
+            label2.Dock = DockStyle.Top;
+            label2.Location = new Point(0, 0);
             label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
             label2.Size = new Size(63, 37);
@@ -49,6 +52,7 @@ namespace Tarantino.WFI
             // 
             // _answerResponseEditPanel
             // 
+            _answerResponseEditPanel.Controls.Add(_eventEditor);
             _answerResponseEditPanel.Controls.Add(label2);
             _answerResponseEditPanel.Controls.Add(_textView);
             _answerResponseEditPanel.Controls.Add(_addResponseButton);
@@ -56,41 +60,50 @@ namespace Tarantino.WFI
             _answerResponseEditPanel.Location = new Point(0, 0);
             _answerResponseEditPanel.Margin = new Padding(6, 7, 6, 7);
             _answerResponseEditPanel.Name = "_answerResponseEditPanel";
-            _answerResponseEditPanel.Size = new Size(1003, 387);
+            _answerResponseEditPanel.Size = new Size(1003, 725);
             _answerResponseEditPanel.TabIndex = 1;
+            // 
+            // _eventEditor
+            // 
+            _eventEditor.AutoSize = true;
+            _eventEditor.Location = new Point(6, 339);
+            _eventEditor.Margin = new Padding(6, 7, 6, 7);
+            _eventEditor.Name = "_eventEditor";
+            _eventEditor.Size = new Size(991, 379);
+            _eventEditor.TabIndex = 6;
+            // 
+            // _textView
+            // 
+            _textView.ColumnHeadersHeight = 52;
+            _textView.Location = new Point(3, 40);
+            _textView.Name = "_textView";
+            _textView.RowHeadersWidth = 92;
+            _textView.Size = new Size(997, 218);
+            _textView.TabIndex = 5;
+            _textView.CellValueChanged += OnTextComponentCellValueChanged;
             // 
             // _addResponseButton
             // 
             _addResponseButton.Location = new Point(6, 268);
             _addResponseButton.Margin = new Padding(6, 7, 6, 7);
             _addResponseButton.Name = "_addResponseButton";
-            _addResponseButton.Size = new Size(971, 57);
+            _addResponseButton.Size = new Size(991, 57);
             _addResponseButton.TabIndex = 4;
             _addResponseButton.Text = "Add response";
             _addResponseButton.UseVisualStyleBackColor = true;
             _addResponseButton.Click += OnAddResponseClicked;
             // 
-            // listView1
-            // 
-            _textView.Location = new Point(3, 40);
-            _textView.Name = "_textComponentListView";
-            _textView.Size = new Size(974, 218);
-            _textView.TabIndex = 5;
-            _textView.CellValueChanged += OnTextComponentCellValueChanged;
-            _textView.AllowUserToAddRows = true;
-           
-            // 
             // DialogEditor
             // 
             AutoScaleDimensions = new SizeF(15F, 37F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = false;
             Controls.Add(_answerResponseEditPanel);
             Margin = new Padding(6, 7, 6, 7);
             Name = "DialogEditor";
-            Size = new Size(1003, 387);
+            Size = new Size(1003, 725);
             _answerResponseEditPanel.ResumeLayout(false);
             _answerResponseEditPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)_textView).EndInit();
             ResumeLayout(false);
         }
 
@@ -99,5 +112,6 @@ namespace Tarantino.WFI
         private Panel _answerResponseEditPanel;
         private Button _addResponseButton;
         private DataGridView _textView;
+        private EventEditor _eventEditor;
     }
 }

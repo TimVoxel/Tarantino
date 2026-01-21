@@ -74,6 +74,7 @@ namespace Tarantino.WFI
             _textView.AllowUserToAddRows = true;
             _textView.AutoGenerateColumns = true;
             _textView.DataSource = dataSource;
+            _eventEditor.Bind(builder.Events ?? new List<DialogEvent.Builder>());
         }
 
         private void OnAddResponseClicked(object sender, EventArgs e)
